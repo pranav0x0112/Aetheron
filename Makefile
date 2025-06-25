@@ -1,3 +1,5 @@
+# commands are make clean and make run
+# This Makefile is used to compile and run a Bluespec simulation for the Aetheron project.
 # ---------- CONFIG -----------
 
 TOP      ?= mkAetheronTop
@@ -31,4 +33,4 @@ $(OUT_DIR):
 	mkdir -p $(OUT_DIR)
 
 clean:
-	rm -rf $(OUT_DIR)
+	rm -rf $(OUT_DIR) 
