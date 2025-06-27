@@ -11,7 +11,12 @@ EXE      ?= sim
 SRCS     := $(shell find $(SRC_DIR) -name '*.bsv')
 
 # Bluespec Compiler Flags
-BSC_FLAGS := -sim -p +:$(SRC_DIR) -bdir $(OUT_DIR) -info-dir $(OUT_DIR)
+BSC_FLAGS := -sim \
+             -p +:$(SRC_DIR) \
+             -p +:$(SRC_DIR)/TileLinkPkg \
+             -p +:$(SRC_DIR)/PeripheralsPkg \
+             -bdir $(OUT_DIR) \
+             -info-dir $(OUT_DIR)
 
 # ---------- TARGETS -----------
 
@@ -33,4 +38,4 @@ $(OUT_DIR):
 	mkdir -p $(OUT_DIR)
 
 clean:
-	rm -rf $(OUT_DIR) 
+	rm -rf $(OUT_DIR)
