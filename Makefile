@@ -15,6 +15,7 @@ BSC_FLAGS := -sim \
              -p +:$(SRC_DIR) \
              -p +:$(SRC_DIR)/TileLinkPkg \
              -p +:$(SRC_DIR)/PeripheralsPkg \
+             -p +:$(SRC_DIR)/MemoryPkg \
              -bdir $(OUT_DIR) \
              -info-dir $(OUT_DIR)
 

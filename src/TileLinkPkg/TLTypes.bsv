@@ -6,6 +6,7 @@ package TLTypes;
 
   typedef struct {
     Bool success;
+    Bit#(32) data;
   } TL_DResp deriving (Bits, Eq, FShow);
 
 endpackage
