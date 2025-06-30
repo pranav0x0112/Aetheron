@@ -4,8 +4,8 @@ package TileLinkPkg;
   import TLSlaveXactor::*;
   import TLTypes::*;
 
-  export TLMasterXactorIfc;
-  export TLSlaveXactorIfc;
+  export TLMasterXactor::*;
+  export TLSlaveXactor::*;
   export TLTypes::*;
 
 endpackage

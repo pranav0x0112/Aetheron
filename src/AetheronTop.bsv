@@ -15,7 +15,7 @@ package AetheronTop;
     mkConnection(cpu.reqOut, master.reqIn);
     mkConnection(master.respOut, cpu.respIn);
     mkConnection(master.tlOut, slave.tlIn);
-    mkConnection(slave.tlRespOut, master.tlRespIn);
+    mkConnection(slave.respOut, master.tlRespIn);
     mkConnection(slave.periphOut, gpio.reqIn);
 
   endmodule

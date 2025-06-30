@@ -1,6 +1,7 @@
 package TLSlaveXactor;
 
   import FIFO::*;
+  import FIFOF::*;
   import GetPut::*;
   import TLTypes::*;
 
@@ -37,7 +38,7 @@ package TLSlaveXactor;
       endmethod
     endinterface
 
-    interface Get tlRespOut  = toGet(respFifo);
+    interface Get respOut  = toGet(respFifo);
     interface Put periphOut  = toPut(periphFifo);
   endmodule
 endpackage
