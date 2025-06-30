@@ -14,16 +14,25 @@ build/
 *.sched
 *.c
 *.cpp
+*.cxx      
 *.h
-*.log
 *.out
 
-# Editor crap
-*~
-*.swp
-*.DS_Store
-
-# tag files or simulator dumps
-tags
+# Temporary simulation or elaboration files
+*.sim
+*.e
 *.vvp
 *.fst
+*.vpi
+
+# Editor junk
+*~
+*.swp
+*.swo
+*.DS_Store
+
+# Tag files and IDE caches
+tags
+.idea/
+.vscode/
+*.cache
