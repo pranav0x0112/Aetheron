@@ -1,0 +1,29 @@
+# Bluespec build artifacts
+build/
+*.ba
+*.bo
+*.bi
+*.so
+*.o
+*.a
+*.hi
+*.cf
+*.vcd
+*.vcd.gz
+*.log
+*.sched
+*.c
+*.cpp
+*.h
+*.log
+*.out
+
+# Editor crap
+*~
+*.swp
+*.DS_Store
+
+# tag files or simulator dumps
+tags
+*.vvp
+*.fst
