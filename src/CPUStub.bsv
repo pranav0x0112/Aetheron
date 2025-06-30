@@ -1,6 +1,7 @@
 package CPUStub;
 
   import FIFO::*;
+  import FIFOF::*;
   import GetPut::*;
   import TLTypes::*;
 
@@ -11,17 +12,24 @@ package CPUStub;
 
   module mkCPUStub(CPUStubIfc);
 
-    Reg#(Bool) hasSent <- mkReg(False);
-    FIFO#(TL_DResp) dRespFifo <- mkFIFO;
-    FIFO#(TL_AReq)  aReqFifo  <- mkFIFO;
+    Reg#(Bit#(32)) pc <- mkReg(0);
+    FIFOF#(TL_DResp) dRespFifo <- mkFIFOF;
+    FIFOF#(TL_AReq)  aReqFifo  <- mkFIFOF;
+    Reg#(Bool) sentReq <- mkReg(False);
 
-    rule sendOnce (!hasSent);
-      TL_AReq req = TL_AReq {
-        address: 32'h40000000
-      };
+    rule sendFetch (!sentReq);
+      TL_AReq req = TL_AReq { address: pc };
       aReqFifo.enq(req);
-      $display("[CPU] Put to addr %x", req.address);
-      hasSent <= True;
+      $display("[CPU] Fetching instruction at addr: %08x", pc);
+      sentReq <= True;
+    endrule
+
+    rule recvInstr (sentReq && dRespFifo.notEmpty);
+      let resp = dRespFifo.first;
+      dRespFifo.deq;
+      $display("[CPU] Got instruction: %08x", resp.data);
+      pc <= pc + 4;
+      sentReq <= False;
     endrule
 
     interface Get reqOut = toGet(aReqFifo);
