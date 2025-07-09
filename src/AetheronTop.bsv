@@ -5,6 +5,7 @@ package AetheronTop;
   import PeripheralsPkg::*;
   import Connectable::*;
   import MemoryPkg::*;
+  import RAM::*;
 
   module mkAetheronTop(Empty);
 
@@ -13,6 +14,7 @@ package AetheronTop;
     let slave <- mkTLSlaveXactor;
     let gpio <- mkGPIO;
     let rom <- mkROM;
+    let ram <- mkRAM;
 
     mkConnection(cpu.reqOut, master.reqIn);
     mkConnection(master.respOut, cpu.respIn);
@@ -21,6 +23,8 @@ package AetheronTop;
     mkConnection(slave.periphOut, gpio.reqIn);
     mkConnection(slave.romOut, rom.tlIn);
     mkConnection(rom.tlRespOut, slave.romIn);
+    mkConnection(slave.ramOut, ram.tlIn);
+    mkConnection(ram.tlRespOut, slave.ramIn);
 
   endmodule
 

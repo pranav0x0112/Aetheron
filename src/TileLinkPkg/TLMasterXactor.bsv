@@ -32,10 +32,16 @@ package TLMasterXactor;
 
     // Rule to forward request to outFifo
     rule forwardReq (hasReq && !sent);
-      $display("[TL Master] Sending PutFullData: addr=%x", currentReq.address);
+      $display("[TL Master] Sending request: opcode=%0d, addr=%x, data=%x", currentReq.opcode, currentReq.address, currentReq.data);
       outFifo.enq(currentReq);
       hasReq <= False;
       sent <= True;
+    endrule
+
+    rule resetSent;
+      if (sent) begin
+        sent <= False;
+      end
     endrule
 
     interface Get respOut = toGet(respFifo);
