@@ -12,7 +12,7 @@ package ROM;
   endinterface
 
   module mkROM(ROMIfc);
-    RegFile#(Bit#(10), Bit#(32)) mem <- mkRegFileLoad("rom.hex", 0, 1023);
+    RegFile#(Bit#(10), Bit#(32)) mem <- mkRegFileLoad("hex/rom.hex", 0, 1023);
 
     FIFOF#(TL_AReq) reqFifo <- mkFIFOF;
     FIFOF#(TL_DResp) respFifo <- mkFIFOF;
