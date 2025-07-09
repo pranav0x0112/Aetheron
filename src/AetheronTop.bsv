@@ -20,7 +20,7 @@ package AetheronTop;
     mkConnection(master.respOut, cpu.respIn);
     mkConnection(master.tlOut, slave.tlIn);
     mkConnection(slave.respOut, master.tlRespIn);
-    mkConnection(slave.periphOut, gpio.reqIn);
+    mkConnection(slave.periphOut, gpio.tlIn);
     mkConnection(slave.romOut, rom.tlIn);
     mkConnection(rom.tlRespOut, slave.romIn);
     mkConnection(slave.ramOut, ram.tlIn);

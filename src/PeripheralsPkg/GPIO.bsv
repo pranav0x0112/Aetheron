@@ -5,12 +5,14 @@ package GPIO;
   import TLTypes::*;
 
   interface GPIOIfc;
-    interface Get#(TL_AReq) reqIn;
+    interface Get#(TL_AReq) tlIn;
+    interface Get#(TL_DResp) tlRespOut;
   endinterface
 
   module mkGPIO(GPIOIfc);
 
     FIFOF#(TL_AReq) reqFifo <- mkFIFOF;
+    FIFOF#(TL_DResp) respFifo <- mkFIFOF;
 
     rule handleWrite if (reqFifo.notEmpty);
       let req = reqFifo.first;
@@ -21,9 +23,15 @@ package GPIO;
       end else begin
         $display("[GPIO] Invalid address: %08x", req.address);
       end
+
+      respFifo.enq(TL_DResp {
+        success: True,
+        data: 32'h00000000
+      });
     endrule
 
-    interface Get reqIn = toGet(reqFifo);
+    interface Get tlIn = toGet(reqFifo);
+    interface Get tlRespOut = toGet(respFifo);
 
   endmodule
 endpackage
