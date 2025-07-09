@@ -1,4 +1,6 @@
-# Bluespec build artifacts
+# ---------------------
+# Build Artifacts
+# ---------------------
 build/
 *.ba
 *.bo
@@ -8,31 +10,40 @@ build/
 *.a
 *.hi
 *.cf
-*.vcd
-*.vcd.gz
-*.log
 *.sched
-*.c
-*.cpp
-*.cxx      
-*.h
-*.out
-
-# Temporary simulation or elaboration files
 *.sim
 *.e
+*.out
 *.vvp
-*.fst
 *.vpi
 
-# Editor junk
+# Simulation outputs
+*.vcd
+*.vcd.gz
+*.fst
+*.log
+
+# ---------------------
+# Generated C/CPP files (exclude c_src/)
+# ---------------------
+*.c
+*.cpp
+*.cxx
+*.h
+
+!c_src/*.c
+!c_src/*.h
+
+# ---------------------
+# Editor/IDE junk
+# ---------------------
 *~
 *.swp
 *.swo
 *.DS_Store
 
-# Tag files and IDE caches
-tags
-.idea/
+# VSCode / IntelliJ / Tags
 .vscode/
+.idea/
+tags
 *.cache
