@@ -5,7 +5,7 @@ package GPIO;
   import TLTypes::*;
 
   interface GPIOIfc;
-    interface Get#(TL_AReq) tlIn;
+    interface Put#(TL_AReq) tlIn; 
     interface Get#(TL_DResp) tlRespOut;
   endinterface
 
@@ -30,7 +30,7 @@ package GPIO;
       });
     endrule
 
-    interface Get tlIn = toGet(reqFifo);
+    interface Put tlIn = toPut(reqFifo);
     interface Get tlRespOut = toGet(respFifo);
 
   endmodule

@@ -6,12 +6,15 @@ package PeripheralsPkg;
   import FIFO::*;
   import FIFOF::*;
   import GetPut::*;
+  import Connectable::*;
 
   export GPIO::*;
   export UART::*;
+  export PeripheralsIfc(..); 
+  export mkPeripherals;  
 
   interface PeripheralsIfc;
-    interface Get#(TL_AReq) tlIn;
+    interface Put#(TL_AReq) tlIn;  
     interface Get#(TL_DResp) tlRespOut;
   endinterface
 
@@ -24,9 +27,8 @@ package PeripheralsPkg;
     GPIOIfc gpio <- mkGPIO;
     UARTIfc uart <- mkUART;
 
-    gpio.tlIn = toGet(gpioReqQ);
-    uart.tlIn = toGet(uartReqQ);
-
+    mkConnection(toGet(gpioReqQ), gpio.tlIn);  
+    mkConnection(toGet(uartReqQ), uart.tlIn);  
     function Bool isGPIO(Bit#(32) addr);
       return addr[31:28] == 4'h2;
     endfunction
@@ -55,8 +57,7 @@ package PeripheralsPkg;
       respFifo.enq(resp);
     endrule
 
-    interface Get tlIn = toGet(reqFifo);
+    interface Put tlIn = toPut(reqFifo);  
     interface Get tlRespOut = toGet(respFifo);
-
   endmodule
 endpackage

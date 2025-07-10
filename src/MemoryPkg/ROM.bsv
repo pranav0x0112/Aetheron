@@ -7,7 +7,7 @@ package ROM;
   import TLTypes::*;
 
   interface ROMIfc;
-    interface Get#(TL_AReq) tlIn;
+    interface Put#(TL_AReq) tlIn;  
     interface Get#(TL_DResp) tlRespOut;
   endinterface
 
@@ -16,6 +16,12 @@ package ROM;
 
     FIFOF#(TL_AReq) reqFifo <- mkFIFOF;
     FIFOF#(TL_DResp) respFifo <- mkFIFOF;
+
+    rule debugROM;
+      if (reqFifo.notEmpty) begin
+        $display("[ROM Debug] Request pending: addr=%h", reqFifo.first.address);
+      end
+    endrule
 
     rule handleRead (reqFifo.notEmpty);
       let req = reqFifo.first;
@@ -29,8 +35,7 @@ package ROM;
       respFifo.enq(TL_DResp { success: True, data: data });
     endrule
 
-    interface Get tlIn = toGet(reqFifo);
+    interface Put tlIn = toPut(reqFifo);  
     interface Get tlRespOut = toGet(respFifo);
-
   endmodule
 endpackage

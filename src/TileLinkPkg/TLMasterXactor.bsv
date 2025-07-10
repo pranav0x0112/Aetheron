@@ -1,6 +1,7 @@
 package TLMasterXactor;
 
   import FIFO::*;
+  import FIFOF::*;
   import GetPut::*;
   import TLTypes::*;
 
@@ -11,36 +12,14 @@ package TLMasterXactor;
     interface Put#(TL_DResp) tlRespIn;
   endinterface
 
-
   module mkTLMasterXactor(TLMasterXactorIfc);
+    FIFOF#(TL_AReq) reqFifo <- mkFIFOF;
+    FIFOF#(TL_DResp) respFifo <- mkFIFOF;
 
-    FIFO#(TL_AReq) reqFifo <- mkFIFO;
-    FIFO#(TL_DResp) respFifo <- mkFIFO;
-    FIFO#(TL_AReq) outFifo <- mkFIFO;  // New FIFO for outgoing requests
-
-    Reg#(Bool) sent <- mkReg(False);
-    Reg#(Bool) hasReq <- mkReg(False);
-    Reg#(TL_AReq) currentReq <- mkRegU;
-
-    // Rule to extract a request from the FIFO
-    rule extractReq (!hasReq && !sent);
-      let req = reqFifo.first;
-      reqFifo.deq;
-      currentReq <= req;
-      hasReq <= True;
-    endrule
-
-    // Rule to forward request to outFifo
-    rule forwardReq (hasReq && !sent);
-      $display("[TL Master] Sending request: opcode=%0d, addr=%x, data=%x", currentReq.opcode, currentReq.address, currentReq.data);
-      outFifo.enq(currentReq);
-      hasReq <= False;
-      sent <= True;
-    endrule
-
-    rule resetSent;
-      if (sent) begin
-        sent <= False;
+    rule debugFifos;
+      if (reqFifo.notEmpty) begin
+        $display("[TL Master Debug] Request pending in reqFifo: opcode=%0d, addr=%h", 
+                 reqFifo.first.opcode, reqFifo.first.address);
       end
     endrule
 
@@ -48,18 +27,19 @@ package TLMasterXactor;
     
     interface Put reqIn;
       method Action put(TL_AReq req);
+        $display("[TL Master] Received request: opcode=%0d, addr=%h, data=%h", 
+                 req.opcode, req.address, req.data);
         reqFifo.enq(req);
       endmethod
     endinterface
 
-    interface Get tlOut = toGet(outFifo);
+    interface Get tlOut = toGet(reqFifo);
 
     interface Put tlRespIn;
       method Action put(TL_DResp resp);
-        $display("[TL Master] Got AccessAck");
+        $display("[TL Master] Got response: data=%h", resp.data);
         respFifo.enq(resp);
       endmethod
     endinterface
-
   endmodule
 endpackage
