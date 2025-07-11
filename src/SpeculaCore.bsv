@@ -10,9 +10,9 @@ package SpeculaCore;
 
   typedef Bit#(32) Word;
   typedef Bit#(32) Instruction;
-  typedef Bit#(32) RegIndex;
+  typedef Bit#(5) RegIndex;
 
-  typdef struct {
+  typedef struct {
     Bit #(7) opcode;
     RegIndex rd;
     RegIndex rs1;
@@ -20,17 +20,17 @@ package SpeculaCore;
     Bit #(3) funct3;
     Bit #(7) funct7;
     Bit #(32) imm;
-    Bit #(32) nextPC:
+    Bit #(32) nextPC;
     Instruction raw;
   } Decoded deriving (Bits, FShow);
 
   function Decoded decode(Instruction i, Bit#(32) pc);
     Decoded d;
     d.opcode = i[6:0];
-    d.rd = unpack(i[11:7]);
+    d.rd = i[11:7];
     d.funct3 = i[14:12];
-    d.rs1 = unpack(i[19:15]);
-    d.rs2 = unpack(i[24:20]);
+    d.rs1 = i[19:15];
+    d.rs2 = i[24:20];
     d.funct7 = i[31:25];
     d.nextPC = pc + 4;
     d.raw = i;
