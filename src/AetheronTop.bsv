@@ -26,10 +26,20 @@ package AetheronTop;
       end
     endrule
 
-    rule debugMaster;
-      if (cpu.isDone) begin
-        $display("[Top] CPU execution complete, finishing simulation");
-        $finish;
+    Reg#(Bool) cpuDoneDetected <- mkReg(False);
+    Reg#(Bit#(32)) waitCycles <- mkReg(0);
+    let extraCycles = 20;
+
+    rule gracefulShutdown;
+      if (cpu.isDone) cpuDoneDetected <= True;
+
+      if (cpuDoneDetected) begin
+        waitCycles <= waitCycles + 1;
+
+        if (waitCycles >= extraCycles) begin
+          $display("[Top] CPU done; waited %0d cycles for outstanding TL traffic",waitCycles);
+          $finish;
+        end
       end
     endrule
 
@@ -38,6 +48,7 @@ package AetheronTop;
     mkConnection(master.tlOut, slave.tlIn);
     mkConnection(slave.respOut, master.tlRespIn);
     mkConnection(slave.periphOut, peripherals.tlIn);
+    mkConnection(peripherals.tlRespOut, master.tlRespIn);
     mkConnection(slave.romOut, rom.tlIn);         
     mkConnection(rom.tlRespOut, slave.romIn);
     mkConnection(slave.ramOut, ram.tlIn);     

@@ -34,7 +34,7 @@ package PeripheralsPkg;
     endfunction
 
     function Bool isUART(Bit#(32) addr);
-      return addr[31:28] == 4'h1;
+      return addr[31:28] == 4'h8;
     endfunction
 
     rule routeGPIO (reqFifo.notEmpty && isGPIO(reqFifo.first.address));

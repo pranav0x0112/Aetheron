@@ -50,6 +50,10 @@ package TLSlaveXactor;
         ramFifo.enq(req);
         $display("[TL Slave] Routed to RAM: addr=%h", req.address);
         routed = True;
+      end else if (req.address >= 32'h80001000 && req.address < 32'h80002000) begin
+        periphFifo.enq(req);
+        $display("[TL Slave] Routed to UART: addr=%h", req.address);
+        routed = True;
       end else begin
         $display("[TL Slave] Unknown address: %h - sending default response", req.address);
         respFifo.enq(TL_DResp{success: False, data: 32'hDEADBEEF});
