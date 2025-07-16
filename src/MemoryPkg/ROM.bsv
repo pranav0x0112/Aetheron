@@ -12,7 +12,7 @@ package ROM;
   endinterface
 
   module mkROM(ROMIfc);
-    RegFile#(Bit#(10), Bit#(32)) mem <- mkRegFileLoad("hex/rom.hex", 0, 1023);
+    RegFile#(Bit#(13), Bit#(32)) mem <- mkRegFileLoad("hex/rom.hex", 0, 8191);
 
     FIFOF#(TL_AReq) reqFifo <- mkFIFOF;
     FIFOF#(TL_DResp) respFifo <- mkFIFOF;
@@ -27,7 +27,7 @@ package ROM;
       let req = reqFifo.first;
       reqFifo.deq;
 
-      let addr = req.address[11:2];
+      let addr = req.address[14:2];
       let data = mem.sub(addr);
 
       $display("[ROM] Read from addr %x: %x", req.address, data);
