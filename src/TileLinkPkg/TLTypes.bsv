@@ -13,7 +13,9 @@ package TLTypes;
 
   typedef enum {
     Get = 0,
-    Put = 1
+    Put = 1,
+    PutFullData = 2,
+    PutPartialData = 3
   } TL_Opcode deriving (Bits, Eq, FShow);
 
 endpackage
