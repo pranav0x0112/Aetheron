@@ -1,29 +1,24 @@
-    .section .text
-    .globl _start
+.section .text
+.globl _start
+.global _global_pointer$
+_global_pointer$ = 0
 
 _start:
-    # t0 = ROM src ptr  (_payload_src)
-    lui   t0, %hi(_payload_src)
-    addi  t0, t0, %lo(_payload_src)
+    lui   sp, 0x80000
+    addi  sp, sp, -4
 
-    # t2 = ROM end ptr  (_payload_end)
-    lui   t2, %hi(_payload_end)
-    addi  t2, t2, %lo(_payload_end)
-
-    # t1 = RAM dst ptr  (0x8000_0000)
-    lui   t1, 0x80000          
+    la    gp, _global_pointer$
+    
+    la    t0, _payload_rom_start     # ROM copy source
+    la    t1, _payload_ram_start     # RAM destination (same as VMA)
+    la    t2, _payload_rom_end       # ROM copy end
+    la    t4, _payload_ram_start     # t4 = jump target
 
 copy_loop:
     lw    t3, 0(t0)
     sw    t3, 0(t1)
     addi  t0, t0, 4
     addi  t1, t1, 4
-    bltu  t0, t2, copy_loop    
+    bltu  t0, t2, copy_loop
 
-    # Jump to RAM entry (0x8000_0000)
-    jalr  x0, t1, 0
-
-hang:
-    j hang                     # never return
-
-    .size _start, . - _start
+    jr    t4

@@ -12,7 +12,7 @@ package RAM;
   endinterface
 
   module mkRAM(RAMIfc);
-    RegFile#(Bit#(10), Bit#(32)) mem <- mkRegFileFull; // 4KB RAM = 1024 x 32-bit words
+    RegFile#(Bit#(13), Bit#(32)) mem <- mkRegFileFull; // 32KB RAM = 8192 x 32-bit words
 
     FIFOF#(TL_AReq) reqFifo <- mkFIFOF;
     FIFOF#(TL_DResp) respFifo <- mkFIFOF;
@@ -21,13 +21,13 @@ package RAM;
       let req = reqFifo.first;
       reqFifo.deq;
 
-      let addr = req.address[11:2];
+      let addr = req.address[14:2];
 
       if(req.opcode == Get) begin
         let data = mem.sub(addr);
         $display("[RAM] Read from addr %x: %x", req.address, data);
         respFifo.enq(TL_DResp { success: True, data: data });
-      end else if (req.opcode == Put) begin
+      end else if (req.opcode == Put || req.opcode == PutFullData || req.opcode == PutPartialData) begin
         mem.upd(addr, req.data);
         $display("[RAM] Write to addr %x: %x", req.address, req.data);
         respFifo.enq(TL_DResp { success: True, data: 0 });

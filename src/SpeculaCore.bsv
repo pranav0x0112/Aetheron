@@ -92,7 +92,10 @@ package SpeculaCore;
         1: begin rf.upd(2, 20); $display("[INIT] Setting x2 = 20"); end
         2: begin rf.upd(5, 100); $display("[INIT] Setting x5 = 100"); end
         3: begin rf.upd(6, 60); $display("[INIT] Setting x6 = 60"); end
-        4: begin
+        4: begin rf.upd(31, 32'h12345678); $display("[INIT] Setting x31 = 0x12345678"); end
+        5: begin
+          let val = rf.sub(31);
+          $display("[INIT] Readback x31 = %h", val);
           rf_init_done <= True;
           $display("=== Register file initialized ===");
         end
@@ -119,7 +122,7 @@ package SpeculaCore;
     endrule
 
     rule checkEndProgram(pipelineStarted);
-      if (pc >= 40) begin
+      if (pc >= 80) begin
         reachedEndPC <= True;
       end
 
@@ -155,14 +158,19 @@ package SpeculaCore;
 
     rule stage_IF_commit(if_respReady);
       if_id_instr <= if_instrBuf;
-      if_id_pc <= flush ? nextPC : pc;
-      if (!flush) pc <= pc + 4;
-      flush <= False;
+      if (flush) begin
+        pc <= nextPC;
+        if_id_pc <= nextPC;
+        $display("[IF] FLUSH: Jumping to %h", nextPC);
+      end else begin
+        pc <= pc + 4;
+        if_id_pc <= pc;
+      end
       if_respReady <= False;
 
       $display("[IF] Committed instruction %h from pc = %0d", if_instrBuf, flush ? nextPC : pc);
 
-      if (pc >= 40) begin
+      if (pc >= 32'h80000100) begin
         done <= True;
         $display("=== Program execution complete ===");
       end
@@ -248,11 +256,20 @@ package SpeculaCore;
               3'b000: begin // BEQ
                 if (val1 == val2) begin
                   flush <= True;
-                  nextPC <= d.nextPC + d.imm - 4; 
+                  nextPC <= d.nextPC + d.imm; 
                   $display("[EX] BEQ taken: %0d == %0d, branching to %0d", val1, val2, d.nextPC + d.imm);
                 end else begin
                   $display("[EX] BEQ not taken: %0d != %0d", val1, val2);
                 end
+              end
+              3'b110: begin
+                if (val1 < val2 ) begin
+                  flush <= True;
+                  nextPC <= d.nextPC + d.imm;
+                  $display("[EX] BLTU taken: %0d < %0d, branching to %0d", val1, val2, d.nextPC + d.imm);
+                end else begin
+                  $display("[EX] BLTU not taken: %0d >= %0d", val1, val2);
+                end 
               end
               default: $display("[EX] Unsupported branch funct3: %b", d.funct3);
             endcase
@@ -277,7 +294,7 @@ package SpeculaCore;
               result = effAddr;
               storeVal = val2;
               writeReg = False;
-              $display("[EX] SW: addr=0x%h  data=0x%h", effAddr, storeVal);
+              $display("[EX] SW: addr=0x%h  data=0x%h (rs2=x%0d, val2=%h)", effAddr, storeVal, d.rs2, val2);
             end else begin
               $display("[EX] Unsupported STORE funct3 %b", d.funct3);
               writeReg = False;
@@ -296,7 +313,7 @@ package SpeculaCore;
 
           7'b1101111: begin // JAL
             result = d.nextPC; 
-            nextPC <= d.nextPC + d.imm - 4;
+            nextPC <= d.nextPC + d.imm;
             flush <= True;
             $display("[EX] JAL: rd=%0d gets %h, jumping to %h", d.rd, result, d.nextPC + d.imm);
           end
@@ -328,6 +345,15 @@ package SpeculaCore;
         mem_wb <= tuple3(result, d.rd, True);
       end
       id_ex_valid <= False;
+    endrule
+
+    rule debugBLTU(pipelineStarted && !done && id_ex_valid);
+      let d = id_ex_decoded;
+      if (d.opcode == 7'b1100011 && d.funct3 == 3'b110) begin
+        let rs1 = rf.sub(d.rs1);
+        let rs2 = rf.sub(d.rs2);
+        $display("[BLTU] rs1 = %h, rs2 = %h, rs1<rs2 = %d", rs1, rs2, rs1 < rs2);
+      end 
     endrule
 
     // === MEM Request ===
