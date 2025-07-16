@@ -16,6 +16,7 @@ build/
 *.out
 *.vvp
 *.vpi
+*.h
 
 # Simulation outputs
 *.vcd
@@ -29,10 +30,9 @@ build/
 *.c
 *.cpp
 *.cxx
-*.h
 
-!c_src/*.c
-!c_src/*.h
+!c_src/**/*.c
+!c_src/**/*.h 
 
 # ---------------------
 # Editor/IDE junk
