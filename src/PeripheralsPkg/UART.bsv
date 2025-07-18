@@ -18,7 +18,7 @@ package UART;
       let req = reqFifo.first;
       reqFifo.deq;
 
-      if (req.address == 32'h80001000) begin
+      if (req.address == 32'h40001000) begin
         $display("[UART] Transmit data: %08x", req.data);
       end else begin
         $display("[UART] Invalid address: %08x", req.address);

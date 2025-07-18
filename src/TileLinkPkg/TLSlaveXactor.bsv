@@ -38,7 +38,7 @@ package TLSlaveXactor;
 
       Bool routed = False;
 
-      if (req.address >= 32'h00000000 && req.address < 32'h00010000) begin
+      if (req.address >= 32'h00000000 && req.address < 32'h00008000) begin
         romFifo.enq(req);
         $display("[TL Slave] Routed to ROM: addr=%h", req.address);
         routed = True;
@@ -46,13 +46,17 @@ package TLSlaveXactor;
         periphFifo.enq(req);
         $display("[TL Slave] Routed to GPIO: addr=%h", req.address);
         routed = True;
-      end else if (req.address >= 32'h80000000 && req.address < 32'h80001000) begin
+      end else if (req.address >= 32'h80000000 && req.address < 32'h80008000) begin
         ramFifo.enq(req);
         $display("[TL Slave] Routed to RAM: addr=%h", req.address);
         routed = True;
-      end else if (req.address >= 32'h80001000 && req.address < 32'h80002000) begin
+      end else if (req.address >= 32'h40001000 && req.address < 32'h40002000) begin
         periphFifo.enq(req);
         $display("[TL Slave] Routed to UART: addr=%h", req.address);
+        routed = True;
+      end else if (req.address >= 32'h40002000 && req.address < 32'h40003000) begin
+        periphFifo.enq(req);
+        $display("[TL Slave] Routed to TIMER: addr=%h", req.address);
         routed = True;
       end else begin
         $display("[TL Slave] Unknown address: %h - sending default response", req.address);
