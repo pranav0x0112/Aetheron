@@ -26,7 +26,7 @@ package Timer;
       Bool ok = False;
       Bit#(32) response = 32'h00000000;
 
-      if (req.opcode == Get && req.address == 32'h10018000) begin
+      if (req.opcode == Get && req.address == 32'h40002000)
         response = cycleCounter;
         ok = True;
         $display("[TIMER] Read cycle count = %0d", cycleCounter);
