@@ -30,11 +30,15 @@ package PeripheralsPkg;
     mkConnection(toGet(gpioReqQ), gpio.tlIn);  
     mkConnection(toGet(uartReqQ), uart.tlIn);  
     function Bool isGPIO(Bit#(32) addr);
-      return addr[31:28] == 4'h2;
+      return addr >= 32'h40000000 && addr < 32'h40001000;
     endfunction
 
     function Bool isUART(Bit#(32) addr);
-      return addr[31:28] == 4'h8;
+      return addr >= 32'h40001000 && addr < 32'h40002000;
+    endfunction
+
+    function Bool isTIMER(Bit#(32) addr);
+      return addr >= 32'h40002000 && addr < 32'h40003000;
     endfunction
 
     rule routeGPIO (reqFifo.notEmpty && isGPIO(reqFifo.first.address));
