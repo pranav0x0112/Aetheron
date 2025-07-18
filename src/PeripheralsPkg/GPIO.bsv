@@ -18,7 +18,7 @@ package GPIO;
       let req = reqFifo.first;
       reqFifo.deq;
 
-      if (req.address == 32'h40000000) begin
+      if (req.address >= 32'h40000000 && req.address < 32'h40001000) begin
         $display("[GPIO] LED State update request at address: %08x", req.address);
       end else begin
         $display("[GPIO] Invalid address: %08x", req.address);
