@@ -2,7 +2,7 @@
 
 **Aetheron** is a simulation-based RISC-V SoC built from scratch in Bluespec SystemVerilog. It supports real C programs, has a TileLink-lite interconnect, and features basic peripherals like UART, GPIO, and Timer — all memory-mapped and testable via simulation.
 
-> Read the full journey: [aetheron-soc.hashnode.dev](https://aetheron-soc.hashnode.dev/aetheron-bringing-my-own-soc-to-life)
+> Read the full journey: [Aetheron: Bringing My Own SoC to Life](https://aetheron-soc.hashnode.dev/aetheron-bringing-my-own-soc-to-life)
 
 ## Features
 
